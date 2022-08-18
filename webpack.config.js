@@ -1,16 +1,25 @@
-const webpack = require('webpack');
-const nodeExternals = require('webpack-node-externals');
+import nodeExternals from 'webpack-node-externals';
+import { RunScriptWebpackPlugin } from 'run-script-webpack-plugin';
 
-module.exports = function (options) {
+export default function (options, webpack) {
     return {
         ...options,
-        entry: ['webpack/hot/poll?100', './src/main.ts'],
-        watch: true,
+        entry: ['webpack/hot/poll?100', options.entry],
         externals: [
             nodeExternals({
-                whitelist: ['webpack/hot/poll?100'],
+                allowlist: ['webpack/hot/poll?100'],
             }),
         ],
-        plugins: [...options.plugins, new webpack.HotModuleReplacementPlugin()],
+        plugins: [
+            ...options.plugins,
+            new webpack.HotModuleReplacementPlugin(),
+            new webpack.WatchIgnorePlugin({
+                paths: [/\.js$/, /\.d\.ts$/],
+            }),
+            new RunScriptWebpackPlugin({
+                name: options.output.filename,
+                autoRestart: false,
+            }),
+        ],
     };
-};
+}
