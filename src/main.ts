@@ -4,8 +4,6 @@ import helmet from 'helmet';
 
 declare const module: any;
 
-const port = 3030;
-
 async function bootstrap() {
 
     const app = await NestFactory.create(AppModule);
@@ -14,7 +12,7 @@ async function bootstrap() {
     app.use(helmet());
     app.enableCors();
 
-    await app.listen(port);
+    await app.listen(process.env.PORT || 3030);
 
     if (module.hot) {
         module.hot.accept();
